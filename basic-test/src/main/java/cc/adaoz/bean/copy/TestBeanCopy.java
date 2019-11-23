@@ -4,9 +4,12 @@ package cc.adaoz.bean.copy;
 import com.google.common.base.Stopwatch;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.lang3.time.StopWatch;
 import org.springframework.cglib.beans.BeanCopier;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,47 +50,39 @@ public class TestBeanCopy {
         originObject.setS28("setS0");
         originObject.setS29("setS0");
 
+        Executor executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
         final int len = 10000000;
-        new Thread(new Runnable() {
-            public void run() {
+        executor.execute(() -> {
+            try {
+                testApacheBeanUtils(originObject, len);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        executor.execute(() -> {
+            try {
+                testCglibBeanCopier(originObject, len);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        executor.execute(() -> {
+            try {
+                testApacheBeanUtilsPropertyUtils(originObject, len);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        executor.execute(() -> {
+            try {
+                testSpringFramework(originObject, len);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
-                try {
-                    testApacheBeanUtils(originObject, len);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        new Thread(new Runnable() {
-            public void run() {
 
-                try {
-                    testApacheBeanUtilsPropertyUtils(originObject, len);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        new Thread(new Runnable() {
-            public void run() {
-
-                try {
-                    testCglibBeanCopier(originObject, len);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    testSpringFramework(originObject, len);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
     }
 
     private static void testCglibBeanCopier(OriginObject origin, int len) {
@@ -137,6 +132,9 @@ public class TestBeanCopy {
     private static void testApacheBeanUtilsPropertyUtils(OriginObject origin, int len)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Stopwatch stopwatch = Stopwatch.createStarted();
+        org.apache.commons.lang3.time.StopWatch stopWatchLang3 = StopWatch.createStarted();
+        org.springframework.util.StopWatch stopWatchSpring = new org.springframework.util.StopWatch();
+        stopWatchSpring.start();
         System.out.println();
         System.out.println("================apache BeanUtils PropertyUtils执行" + len + "次================");
         DestinationObject destination2 = new DestinationObject();
@@ -145,7 +143,9 @@ public class TestBeanCopy {
         }
 
         stopwatch.stop();
-
+        stopWatchLang3.stop();
+        System.out.println(stopWatchLang3.getNanoTime());
+        System.out.println(stopWatchSpring.prettyPrint());
         System.out.println("testApacheBeanUtilsPropertyUtils 耗时: " + stopwatch.elapsed(TimeUnit.MILLISECONDS));
     }
 }
