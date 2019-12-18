@@ -3,6 +3,7 @@ package cc.adaoz.number;
 import cc.adaoz.bean.copy.DestinationObject;
 import com.google.common.base.Stopwatch;
 
+import java.time.Instant;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -13,6 +14,9 @@ import java.util.concurrent.TimeUnit;
 public class NumberTest {
 
     public static void main(String[] args) {
+
+        System.out.println(System.currentTimeMillis());
+        System.out.println(Instant.now().toEpochMilli());
 
         Integer i1 = 1;
         Integer i2 = 2;
