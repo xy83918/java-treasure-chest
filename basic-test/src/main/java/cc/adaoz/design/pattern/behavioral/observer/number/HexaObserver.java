@@ -1,4 +1,4 @@
-package cc.adaoz.design.pattern.behavioral.observer;
+package cc.adaoz.design.pattern.behavioral.observer.number;
 
 public class HexaObserver extends Observer{
  
