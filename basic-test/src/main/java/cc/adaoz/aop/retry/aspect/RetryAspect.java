@@ -1,5 +1,6 @@
 package cc.adaoz.aop.retry.aspect;
 
+import cc.adaoz.aop.retry.BizException;
 import cc.adaoz.aop.retry.annotation.Retry;
 import cc.adaoz.time.SystemClock;
 import com.google.common.collect.ImmutableMap;
@@ -49,22 +50,26 @@ public class RetryAspect {
                 try {
                     Thread.sleep(delay);
                     if (SystemClock.millisClock().now() > timeOutAt) {
-                        retryTimeOut.setErrorMsg("retry Time Out");
+                        retryTimeOut.setMsg("retry Time Out");
                         break;
                     }
                     return joinPoint.proceed();
                 } catch (Exception e) {
+                    System.out.println(e.getMessage());
+                    e.printStackTrace();
                     log.info("already try {} times,exception is ", alreadyTry, e);
                 }
             }
         } catch (Throwable throwable) {
+            System.out.println(throwable.getMessage());
+            throwable.printStackTrace();
             log.error(throwable.getMessage(), throwable);
         }
 
         retryTimeOut.setCarrier(recordError(joinPoint));
 
         if (alreadyTry == maxRetry) {
-            retryTimeOut.setErrorMsg("Exceeded maximum retries");
+            retryTimeOut.setMsg("Exceeded maximum retries");
         }
         throw retryTimeOut;
 
