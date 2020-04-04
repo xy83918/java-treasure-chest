@@ -28,7 +28,7 @@ import java.util.Map;
 public class RetryAspect {
 
 
-    @Around("@annotation(com.dt.framework.retry.annotation.Retry)")
+    @Around("@annotation(cc.adaoz.aop.retry.annotation.Retry)")
     public Object aroundAdvice(ProceedingJoinPoint joinPoint) throws Throwable {
 
         Method method = getMethod(joinPoint);
