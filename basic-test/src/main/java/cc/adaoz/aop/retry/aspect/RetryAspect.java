@@ -17,10 +17,9 @@ import java.lang.reflect.Method;
 import java.util.Map;
 
 /**
- * @Retry can retry 3 times
- *
  * @author albert
  * @version 0.1
+ * @Retry can retry 3 times
  * @since 1/17/20 5:06 PM
  */
 @Aspect
@@ -57,7 +56,7 @@ public class RetryAspect {
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                     e.printStackTrace();
-                    log.info("already try {} times,exception is ", alreadyTry, e);
+                    log.info("already try {} times,exception is " + alreadyTry, e);
                 }
             }
         } catch (Throwable throwable) {
